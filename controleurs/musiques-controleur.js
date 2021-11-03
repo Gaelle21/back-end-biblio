@@ -1,6 +1,7 @@
 const {v4: uuidv4} = require('uuid');
+const Musique = require("../models/musique");
 
-let musiques = [
+let MUSIQUES = [
     {
       id: "1",
       auteur: "Daft Punk",
@@ -50,13 +51,20 @@ let musiques = [
     },
   ];
 
-  const getMusiques = (req, res, next) =>{
+  const getMusiques = async(req, res, next) =>{
+    let musiques
+    try{
+      musiques = await Musique.find();
+    } catch(err){
+      console.log(err);
+      res.status(404).json({message:"Erreur traitement"});
+    }
       res.json({musiques});
   };
 
   const getMusiqueById = (req, res, next) => {
     const musId = req.params.musiqueId;
-    const musique = musiques.find((m) => {
+    const musique = MUSIQUES.find((m) => {
       return m.id === musId;
     });
   
@@ -76,7 +84,7 @@ let musiques = [
         titre,
         imageUrl
     };
-    musiques.push(createdMusique);
+    MUSIQUES.push(createdMusique);
     res.status(201).json({musique: createdMusique});
 };
 
@@ -84,25 +92,25 @@ const patchMusique =  (req, res, next) => {
     const {id, auteur, annee, titre, imageUrl} = req.body;
     const musiqueId = req.params.musiqueId;
   
-    const updatedMusique = {...musiques.find((m)  => {
+    const updatedMusique = {...MUSIQUES.find((m)  => {
       return m.id === musiqueId;
     })
     };
   
-    const musiqueIndex = musiques.findIndex(m => m.id === musiqueId);
+    const musiqueIndex = MUSIQUES.findIndex(m => m.id === musiqueId);
     updatedMusique.auteur = auteur;
     updatedMusique.annee = annee;
     updatedMusique.titre = titre;
     updatedMusique.imageUrl = imageUrl;
   
-    musiques[musiqueIndex] = updatedMusique;
+    MUSIQUES[musiqueIndex] = updatedMusique;
   
     res.status(200).json({musique:updatedMusique});
   };
 
   const deleteMusique = (req, res, next) =>{
     const musiqueId = req.params.musiqueId;
-    musiques = musiques.filter(m => m.id !== musiqueId);
+    MUSIQUES = MUSIQUES.filter(m => m.id !== musiqueId);
     res.status(200).json({message: "Musique supprimée"});
   };
 

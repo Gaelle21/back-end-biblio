@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
 app.use(express.json());
 
@@ -15,4 +16,13 @@ app.use((error, req, res, next) => {
     res.json({message:error.message || 'Une erreur non gérée est surveneue'});
 });
 
-app.listen(5000);
+const uri = "mongodb+srv://biblioUser:4sOwO3zZpEfUI2YE@cluster0.6jesk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+const options = {useNewUrlParser: true, useUnifiedTopology: true}
+
+mongoose.connect(uri, options)
+.then(() =>{
+    app.listen(5000, console.log('Serveur running...'));
+})
+.catch(err =>{
+    console.log(err);
+})
